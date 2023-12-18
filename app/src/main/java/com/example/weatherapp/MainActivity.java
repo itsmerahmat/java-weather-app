@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         assert location != null;
         cityName = getCityName(location.getLatitude(), location.getLongitude());
-//        cityName = "Banjarbaru";
+
         getWeatherInfo(cityName);
 
         searchIV.setOnClickListener(v -> {
@@ -105,37 +105,39 @@ public class MainActivity extends AppCompatActivity {
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Izin diberikan", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, "Izin ditolak", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Izin ditolak. Aktifkan izin melalui Pengaturan Aplikasi.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
     }
 
     private String getCityName(double latitude, double longitude) {
-        String cityName = "Banjarbaru";
+        String cityName = "Banjarbaru"; // Default city
         Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
         try {
             List<Address> addresses = gcd.getFromLocation(latitude, longitude, 10);
-            assert addresses != null;
-            for(Address adr : addresses) {
-                if(adr != null) {
-                    String city = adr.getLocality();
-                    if(city != null) {
-                        cityName = city;
-                    } else {
-                        Log.d("TAG", "CITY NOT FOUND");
-                        Toast.makeText(this, "Kota tidak ditemukan...", Toast.LENGTH_SHORT).show();
+            if (addresses != null && !addresses.isEmpty()) {
+                for (Address adr : addresses) {
+                    if (adr != null) {
+                        String city = adr.getLocality();
+                        if (city != null && !city.isEmpty()) {
+                            cityName = city;
+                            break; // Keluar dari loop jika nama kota ditemukan
+                        } else {
+                            Log.d("TAG", "CITY NOT FOUND");
+                            Toast.makeText(this, "Kota tidak ditemukan...", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
+            } else {
+                Log.d("TAG", "ADDRESS LIST EMPTY");
             }
-
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Kota tidak ditemukan...", Toast.LENGTH_SHORT).show();
+            Log.e("TAG", "Geocoder exception: " + e.getMessage());
         }
 
         return cityName;
-
     }
 
     private void getWeatherInfo(String cityName) {
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 Picasso.get().load("http:".concat(conditionIcon)).into(iconIV);
                 conditionTV.setText(condition);
                 if(isDay == 1) {
-                    Picasso.get().load("https://i.ibb.co/gZDdZxM/wes-hicks-l-Y2ayo1i4p-M-unsplash-1.jpg").into(backIV);
+                    Picasso.get().load("https://i.ibb.co/PhvXk5T/wes-hicks-XPd-Ajxs-HXo-unsplash-1.jpg").into(backIV);
                 } else {
                     Picasso.get().load("https://i.ibb.co/HN0ndFc/timothee-duran-ilfs-T5p-qv-A-unsplash.jpg").into(backIV);
                 }
