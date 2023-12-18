@@ -43,6 +43,7 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     private RelativeLayout homeRL;
+    private RelativeLayout weatherRL;
     private ProgressBar loadingPB;
     private TextView cityNameTV, temperatureTV, conditionTV;
     private TextInputEditText cityEdt;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         homeRL = findViewById(R.id.idRLHome);
+        weatherRL = findViewById(R.id.idRLWeather);
         loadingPB = findViewById(R.id.idPBLoading);
         cityNameTV = findViewById(R.id.idTVCityName);
         temperatureTV = findViewById(R.id.idTVTemperature);
@@ -160,8 +162,10 @@ public class MainActivity extends AppCompatActivity {
                 conditionTV.setText(condition);
                 if(isDay == 1) {
                     Picasso.get().load("https://i.ibb.co/PhvXk5T/wes-hicks-XPd-Ajxs-HXo-unsplash-1.jpg").into(backIV);
+                    weatherRL.setBackgroundResource(R.drawable.card_dark);
                 } else {
                     Picasso.get().load("https://i.ibb.co/HN0ndFc/timothee-duran-ilfs-T5p-qv-A-unsplash.jpg").into(backIV);
+                    weatherRL.setBackgroundResource(R.drawable.card_light);
                 }
 
                 JSONObject forecastObj = response.getJSONObject("forecast");
