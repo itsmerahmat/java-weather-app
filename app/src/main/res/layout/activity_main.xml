@@ -11,14 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/idPBLoading"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_centerInParent="true"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/idRLHome"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/idIVBack"
@@ -37,7 +37,7 @@
             android:text="Nama Kota"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -173,6 +173,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/idLLWeather1"
                 android:layout_marginTop="15dp"
+                android:paddingBottom="10dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -184,26 +185,29 @@
 
                     <ImageView
                         android:id="@+id/idIVUltraViolet"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_lightbulb"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="5dp"
+                        android:src="@drawable/ic_sun"
                         app:tint="@color/white" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/idTVUltraViolet"
                         android:text="10"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="15dp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Ultra Violet"
+                        android:text="Ultraviolet"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="18dp" />
+                        android:textSize="17sp" />
 
                 </LinearLayout>
 
@@ -216,26 +220,29 @@
 
                     <ImageView
                         android:id="@+id/idIVWindSpeed"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_lightbulb"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_wind"
                         app:tint="@color/white" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/idTVWindSpeed"
                         android:text="12"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="15dp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Kecepatan Angin"
+                        android:text="Wind Speed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="18dp" />
+                        android:textSize="17sp" />
 
                 </LinearLayout>
 
@@ -248,31 +255,31 @@
 
                     <ImageView
                         android:id="@+id/idIVHumidity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_lightbulb"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_humidity"
                         app:tint="@color/white" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/idTVHumidity"
                         android:text="18"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="15dp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Kelembapan"
+                        android:text="Humidity"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="18dp" />
+                        android:textSize="17sp" />
 
                 </LinearLayout>
-
-
-
 
             </LinearLayout>
 
@@ -282,13 +289,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@id/idRVWeather"
-            android:layout_margin="8dp"
-            android:layout_marginBottom="10dp"
-            android:text="Perkiraan Cuaca"
-            android:textSize="15sp"
-            android:textColor="@color/white"
+            android:layout_marginStart="8dp"
             android:layout_marginLeft="10dp"
-            android:textStyle="bold" />
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Perkiraan Cuaca"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/idRVWeather"
@@ -299,7 +307,6 @@
             android:layout_marginBottom="50dp"
             android:background="@android:color/transparent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
 
     </RelativeLayout>
 

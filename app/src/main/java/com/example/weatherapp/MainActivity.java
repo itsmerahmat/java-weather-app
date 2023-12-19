@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout homeRL;
     private RelativeLayout weatherRL;
     private ProgressBar loadingPB;
-    private TextView cityNameTV, temperatureTV, conditionTV;
+    private TextView cityNameTV, temperatureTV, conditionTV, humidityTV, ultraVioletTV, windSpeedTV;
     private TextInputEditText cityEdt;
     private ImageView backIV;
     private ImageView iconIV;
@@ -70,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         cityNameTV = findViewById(R.id.idTVCityName);
         temperatureTV = findViewById(R.id.idTVTemperature);
         conditionTV = findViewById(R.id.idTVCondition);
+        humidityTV = findViewById(R.id.idTVHumidity);
+        ultraVioletTV = findViewById(R.id.idTVUltraViolet);
+        windSpeedTV = findViewById(R.id.idTVWindSpeed);
         RecyclerView weatherRV = findViewById(R.id.idRVWeather);
         cityEdt = findViewById(R.id.idEdtCity);
         backIV = findViewById(R.id.idIVBack);
@@ -91,15 +96,35 @@ public class MainActivity extends AppCompatActivity {
         getWeatherInfo(cityName);
 
         searchIV.setOnClickListener(v -> {
-            String city = Objects.requireNonNull(cityEdt.getText()).toString();
-            if(city.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Masukkan nama kota", Toast.LENGTH_SHORT).show();
-            } else {
-                cityNameTV.setText(cityName);
-                getWeatherInfo(city);
-            }
+            performSearch();
         });
 
+        cityEdt.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                performSearch();
+                return true;
+            }
+            return false;
+        });
+
+    }
+
+    private void performSearch() {
+        String city = Objects.requireNonNull(cityEdt.getText()).toString();
+        if(city.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Masukkan nama kota", Toast.LENGTH_SHORT).show();
+        } else {
+            cityNameTV.setText(cityName);
+            getWeatherInfo(city);
+
+            // Menutup keyboard
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(cityEdt.getWindowToken(), 0);
+
+            // Hapus fokus dari edit text dan hapus teks
+            cityEdt.clearFocus();
+            cityEdt.setText("");
+        }
     }
 
     @Override
@@ -158,6 +183,12 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String temperature = response.getJSONObject("current").getString("temp_c");
                 temperatureTV.setText(temperature + "°C");
+                String humidity = response.getJSONObject("current").getString("humidity");
+                humidityTV.setText(humidity + "%");
+                String windSpeed = response.getJSONObject("current").getString("wind_kph");
+                windSpeedTV.setText(windSpeed + " Km/Jam");
+                String uv = response.getJSONObject("current").getString("uv");
+                ultraVioletTV.setText(uv);
                 int isDay = response.getJSONObject("current").getInt("is_day");
                 String condition = response.getJSONObject("current").getJSONObject("condition").getString("text");
                 String conditionIcon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
