@@ -5,14 +5,14 @@
     android:layout_gravity="center"
     android:layout_margin="4dp"
     app:cardElevation="6dp"
-    app:cardCornerRadius="10dp"
+    app:cardCornerRadius="15dp"
     android:background="@android:color/transparent"
     android:layout_height="wrap_content">
     
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/card_back">
+        android:background="@drawable/card_dark">
 
         <TextView
             android:layout_width="match_parent"

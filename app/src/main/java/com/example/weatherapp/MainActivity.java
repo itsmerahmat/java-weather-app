@@ -3,6 +3,7 @@ package com.example.weatherapp;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -12,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -43,8 +46,9 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     private RelativeLayout homeRL;
+    private RelativeLayout weatherRL;
     private ProgressBar loadingPB;
-    private TextView cityNameTV, temperatureTV, conditionTV;
+    private TextView cityNameTV, temperatureTV, conditionTV, humidityTV, ultraVioletTV, windSpeedTV;
     private TextInputEditText cityEdt;
     private ImageView backIV;
     private ImageView iconIV;
@@ -59,13 +63,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         setContentView(R.layout.activity_main);
         homeRL = findViewById(R.id.idRLHome);
+        weatherRL = findViewById(R.id.idRLWeather);
         loadingPB = findViewById(R.id.idPBLoading);
         cityNameTV = findViewById(R.id.idTVCityName);
         temperatureTV = findViewById(R.id.idTVTemperature);
         conditionTV = findViewById(R.id.idTVCondition);
+        humidityTV = findViewById(R.id.idTVHumidity);
+        ultraVioletTV = findViewById(R.id.idTVUltraViolet);
+        windSpeedTV = findViewById(R.id.idTVWindSpeed);
         RecyclerView weatherRV = findViewById(R.id.idRVWeather);
         cityEdt = findViewById(R.id.idEdtCity);
         backIV = findViewById(R.id.idIVBack);
@@ -83,19 +92,39 @@ public class MainActivity extends AppCompatActivity {
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         assert location != null;
         cityName = getCityName(location.getLatitude(), location.getLongitude());
-//        cityName = "Banjarbaru";
+
         getWeatherInfo(cityName);
 
         searchIV.setOnClickListener(v -> {
-            String city = Objects.requireNonNull(cityEdt.getText()).toString();
-            if(city.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Masukkan nama kota", Toast.LENGTH_SHORT).show();
-            } else {
-                cityNameTV.setText(cityName);
-                getWeatherInfo(city);
-            }
+            performSearch();
         });
 
+        cityEdt.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                performSearch();
+                return true;
+            }
+            return false;
+        });
+
+    }
+
+    private void performSearch() {
+        String city = Objects.requireNonNull(cityEdt.getText()).toString();
+        if(city.isEmpty()) {
+            Toast.makeText(MainActivity.this, "Masukkan nama kota", Toast.LENGTH_SHORT).show();
+        } else {
+            cityNameTV.setText(cityName);
+            getWeatherInfo(city);
+
+            // Menutup keyboard
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(cityEdt.getWindowToken(), 0);
+
+            // Hapus fokus dari edit text dan hapus teks
+            cityEdt.clearFocus();
+            cityEdt.setText("");
+        }
     }
 
     @Override
@@ -105,37 +134,40 @@ public class MainActivity extends AppCompatActivity {
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Izin diberikan", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(this, "Izin ditolak", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Izin ditolak. Aktifkan izin melalui Pengaturan Aplikasi.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
     }
 
     private String getCityName(double latitude, double longitude) {
-        String cityName = "Banjarbaru";
+        String cityName = "Banjarbaru"; // Default city
+        Log.d("CUACA", "getCityName: " + latitude + " " + longitude);
         Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
         try {
             List<Address> addresses = gcd.getFromLocation(latitude, longitude, 10);
-            assert addresses != null;
-            for(Address adr : addresses) {
-                if(adr != null) {
-                    String city = adr.getLocality();
-                    if(city != null) {
-                        cityName = city;
-                    } else {
-                        Log.d("TAG", "CITY NOT FOUND");
-                        Toast.makeText(this, "Kota tidak ditemukan...", Toast.LENGTH_SHORT).show();
+            if (addresses != null && !addresses.isEmpty()) {
+                for (Address adr : addresses) {
+                    if (adr != null) {
+                        String city = adr.getLocality();
+                        if (city != null && !city.isEmpty()) {
+                            cityName = city;
+                            break; // Keluar dari loop jika nama kota ditemukan
+                        } else {
+                            Log.d("TAG", "CITY NOT FOUND");
+                            Toast.makeText(this, "Kota tidak ditemukan...", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
+            } else {
+                Log.d("TAG", "ADDRESS LIST EMPTY");
             }
-
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Kota tidak ditemukan...", Toast.LENGTH_SHORT).show();
+            Log.e("TAG", "Geocoder exception: " + e.getMessage());
         }
 
         return cityName;
-
     }
 
     private void getWeatherInfo(String cityName) {
@@ -151,15 +183,23 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String temperature = response.getJSONObject("current").getString("temp_c");
                 temperatureTV.setText(temperature + "°C");
+                String humidity = response.getJSONObject("current").getString("humidity");
+                humidityTV.setText(humidity + "%");
+                String windSpeed = response.getJSONObject("current").getString("wind_kph");
+                windSpeedTV.setText(windSpeed + " Km/Jam");
+                String uv = response.getJSONObject("current").getString("uv");
+                ultraVioletTV.setText(uv);
                 int isDay = response.getJSONObject("current").getInt("is_day");
                 String condition = response.getJSONObject("current").getJSONObject("condition").getString("text");
                 String conditionIcon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
                 Picasso.get().load("http:".concat(conditionIcon)).into(iconIV);
                 conditionTV.setText(condition);
                 if(isDay == 1) {
-                    Picasso.get().load("https://i.ibb.co/gZDdZxM/wes-hicks-l-Y2ayo1i4p-M-unsplash-1.jpg").into(backIV);
+                    Picasso.get().load("https://i.ibb.co/PhvXk5T/wes-hicks-XPd-Ajxs-HXo-unsplash-1.jpg").into(backIV);
+                    weatherRL.setBackgroundResource(R.drawable.card_dark);
                 } else {
                     Picasso.get().load("https://i.ibb.co/HN0ndFc/timothee-duran-ilfs-T5p-qv-A-unsplash.jpg").into(backIV);
+                    weatherRL.setBackgroundResource(R.drawable.card_light);
                 }
 
                 JSONObject forecastObj = response.getJSONObject("forecast");
