@@ -3,6 +3,7 @@ package com.example.weatherapp;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         setContentView(R.layout.activity_main);
         homeRL = findViewById(R.id.idRLHome);
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String getCityName(double latitude, double longitude) {
         String cityName = "Banjarbaru"; // Default city
+        Log.d("CUACA", "getCityName: " + latitude + " " + longitude);
         Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
         try {
             List<Address> addresses = gcd.getFromLocation(latitude, longitude, 10);
