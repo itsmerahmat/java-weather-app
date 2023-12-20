@@ -35,6 +35,7 @@
             android:gravity="center"
             android:padding="18dp"
             android:text="Nama Kota"
+            android:fontFamily="@font/poppins"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="20sp" />
@@ -64,6 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
+                    android:fontFamily="@font/poppins"
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:singleLine="true"
@@ -138,9 +140,9 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/idIVIcon"
                         android:layout_marginTop="10dp"
-
                         android:gravity="center"
                         android:text="Kondisi"
+                        android:fontFamily="@font/poppins"
                         android:textColor="@color/white"
                         android:textSize="25sp"
                         android:textStyle="bold"/>
@@ -152,6 +154,7 @@
                         android:layout_below="@id/idTVCondition"
                         android:gravity="center_horizontal"
                         android:text="23"
+                        android:fontFamily="@font/poppins"
                         android:layout_marginBottom="10dp"
                         android:textColor="@color/white"
                         android:textSize="40dp" />
@@ -197,6 +200,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/idTVUltraViolet"
                         android:text="10"
+                        android:fontFamily="@font/poppins"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -205,6 +209,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Ultraviolet"
+                        android:fontFamily="@font/poppins"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -232,6 +237,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/idTVWindSpeed"
                         android:text="12"
+                        android:fontFamily="@font/poppins"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -239,7 +245,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Wind Speed"
+                        android:text="Windspeed"
+                        android:fontFamily="@font/poppins"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -267,6 +274,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/idTVHumidity"
                         android:text="18"
+                        android:fontFamily="@font/poppins"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -275,6 +283,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Humidity"
+                        android:fontFamily="@font/poppins"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
@@ -295,6 +304,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text="Perkiraan Cuaca"
+            android:fontFamily="@font/poppins"
             android:textColor="@color/white"
             android:textSize="17sp" />
 
