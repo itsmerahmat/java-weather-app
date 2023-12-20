@@ -1,5 +1,5 @@
 package com.example.weatherapp;
-
+// Import library yang dibutuhkan
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -44,7 +44,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-
+    // Deklarasi variabel komponen yang digunakan
     private RelativeLayout homeRL;
     private RelativeLayout weatherRL;
     private ProgressBar loadingPB;
@@ -62,10 +62,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Menghilangkan status bar dan navigation bar
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        // Mengunci orientasi layar menjadi potrait
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        // Mengatur tampilan awal aplikasi
         setContentView(R.layout.activity_main);
+
+        // Inisialisasi komponen yang digunakan
         homeRL = findViewById(R.id.idRLHome);
         weatherRL = findViewById(R.id.idRLWeather);
         loadingPB = findViewById(R.id.idPBLoading);
@@ -84,21 +89,24 @@ public class MainActivity extends AppCompatActivity {
         weatherRVAdapter = new WeatherRVAdapter(this, weatherRVModalArrayList);
         weatherRV.setAdapter(weatherRVAdapter);
 
+        // Mengambil lokasi terakhir yang diketahui
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_CODE);
         }
 
+        // Mendapatkan nama kota berdasarkan lokasi terakhir yang diketahui
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         assert location != null;
         cityName = getCityName(location.getLatitude(), location.getLongitude());
 
+        // Mendapatkan data cuaca berdasarkan nama kota
         getWeatherInfo(cityName);
 
-        searchIV.setOnClickListener(v -> {
-            performSearch();
-        });
+        // Mengaktifkan tombol search
+        searchIV.setOnClickListener(v -> performSearch());
 
+        // Mengaktifkan tombol search pada keyboard ketika tombol enter ditekan
         cityEdt.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch();
@@ -109,12 +117,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // Fungsi untuk melakukan pencarian cuaca berdasarkan nama kota yang dimasukkan
     private void performSearch() {
         String city = Objects.requireNonNull(cityEdt.getText()).toString();
         if(city.isEmpty()) {
             Toast.makeText(MainActivity.this, "Masukkan nama kota", Toast.LENGTH_SHORT).show();
         } else {
+            // Menampilkan loading dan menghilangkan tampilan cuaca
+            loadingPB.setVisibility(View.VISIBLE);
+            homeRL.setVisibility(View.GONE);
+
             cityNameTV.setText(cityName);
+
             getWeatherInfo(city);
 
             // Menutup keyboard
@@ -127,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Fungsi untuk meminta izin akses lokasi
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -140,9 +155,10 @@ public class MainActivity extends AppCompatActivity {
             }
     }
 
+    // Fungsi untuk mendapatkan nama kota berdasarkan lokasi latitude dan longitude
     private String getCityName(double latitude, double longitude) {
         String cityName = "Banjarbaru"; // Default city
-        Log.d("CUACA", "getCityName: " + latitude + " " + longitude);
+        // Mengambil nama kota dari latitude dan longitude menggunakan Geocoder
         Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
         try {
             List<Address> addresses = gcd.getFromLocation(latitude, longitude, 10);
@@ -170,17 +186,22 @@ public class MainActivity extends AppCompatActivity {
         return cityName;
     }
 
+    // Fungsi untuk mendapatkan data cuaca berdasarkan nama kota yang diberikan dan menampilkannya
     private void getWeatherInfo(String cityName) {
+        // API key dan url
         String url = "http://api.weatherapi.com/v1/forecast.json?key=d79d65badb0341f88ee93952231712&q=" + cityName + "&days=1&aqi=no&alerts=no";
 
         cityNameTV.setText(cityName);
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
 
+        // Mengambil data cuaca dari API
         @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"}) JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+            // Menghilangkan loading dan menampilkan tampilan cuaca
             loadingPB.setVisibility(View.GONE);
             homeRL.setVisibility(View.VISIBLE);
             weatherRVModalArrayList.clear();
             try {
+                // Mengambil data cuaca dari JSON response dan menampilkannya
                 String temperature = response.getJSONObject("current").getString("temp_c");
                 temperatureTV.setText(temperature + "°C");
                 String humidity = response.getJSONObject("current").getString("humidity");
@@ -194,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 String conditionIcon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
                 Picasso.get().load("http:".concat(conditionIcon)).into(iconIV);
                 conditionTV.setText(condition);
+                // Mengatur background dan warna teks berdasarkan waktu (siang/malam)
                 if(isDay == 1) {
                     Picasso.get().load("https://i.ibb.co/PhvXk5T/wes-hicks-XPd-Ajxs-HXo-unsplash-1.jpg").into(backIV);
                     weatherRL.setBackgroundResource(R.drawable.card_dark);
@@ -202,10 +224,12 @@ public class MainActivity extends AppCompatActivity {
                     weatherRL.setBackgroundResource(R.drawable.card_light);
                 }
 
+                // Mengambil data perkiraan cuaca per jam dari JSON response dan menampilkannya
                 JSONObject forecastObj = response.getJSONObject("forecast");
                 JSONObject forcast0 = forecastObj.getJSONArray("forecastday").getJSONObject(0);
                 JSONArray hourArray = forcast0.getJSONArray("hour");
 
+                // Menampilkan data cuaca per jam ke dalam recycler view
                 for(int i = 0; i < hourArray.length(); i++) {
                     JSONObject hourObj = hourArray.getJSONObject(i);
                     String time = hourObj.getString("time");
@@ -214,11 +238,13 @@ public class MainActivity extends AppCompatActivity {
                     String img = hourObj.getJSONObject("condition").getString("icon");
                     weatherRVModalArrayList.add(new WeatherRVModal(time, temper, img, wind));
                 }
+                // Mengubah data cuaca per jam yang ditampilkan
                 weatherRVAdapter.notifyDataSetChanged();
 
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
+            // Menampilkan pesan error jika tidak dapat mengambil data cuaca
         }, error -> Toast.makeText(MainActivity.this, "Tidak dapat mengambil data cuaca", Toast.LENGTH_SHORT).show());
 
         requestQueue.add(jsonObjectRequest);

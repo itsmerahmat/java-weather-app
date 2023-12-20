@@ -1,5 +1,5 @@
 package com.example.weatherapp;
-
+// Import Library yang diperlukan
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,21 +17,26 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.ViewHolder> {
-    private Context context;
+    // Deklarasi Variabel yang diperlukan
+    private Context context; // Untuk mengakses resource
+    // Membuat ArrayList untuk menampung data
     private ArrayList<WeatherRVModal> weatherRVModalArrayList;
 
+    // Membuat Constructor
     public WeatherRVAdapter(Context context, ArrayList<WeatherRVModal> weatherRVModalArrayList) {
         this.context = context;
         this.weatherRVModalArrayList = weatherRVModalArrayList;
     }
 
-    @NonNull
+    @NonNull // Untuk menandakan bahwa nilai yang dikembalikan tidak boleh null
+    // Membuat ViewHolder untuk menampung data
     @Override
     public WeatherRVAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.weather_rv_item, parent, false);
         return new ViewHolder((ViewGroup) view);
     }
 
+    // Menghubungkan data dengan ViewHolder
     @Override
     public void onBindViewHolder(@NonNull WeatherRVAdapter.ViewHolder holder, int position) {
         WeatherRVModal modal = weatherRVModalArrayList.get(position);
@@ -50,6 +55,7 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.View
 
     }
 
+    // Mengembalikan jumlah item yang ada
     @Override
     public int getItemCount() {
         return weatherRVModalArrayList.size();

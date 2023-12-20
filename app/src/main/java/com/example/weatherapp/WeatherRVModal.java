@@ -1,9 +1,11 @@
 package com.example.weatherapp;
 
 public class WeatherRVModal {
+    // Deklarasi Variabel yang diperlukan
 
     private String time, temperature, icon, windSpeed;
 
+    // Membuat Constructor
     public WeatherRVModal(String time, String temperature, String icon, String windSpeed) {
         this.time = time;
         this.temperature = temperature;
@@ -11,6 +13,7 @@ public class WeatherRVModal {
         this.windSpeed = windSpeed;
     }
 
+    // Membuat Getter dan Setter
     public String getTime() {
         return time;
     }
