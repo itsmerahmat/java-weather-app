@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 String humidity = response.getJSONObject("current").getString("humidity");
                 humidityTV.setText(humidity + "%");
                 String windSpeed = response.getJSONObject("current").getString("wind_kph");
-                windSpeedTV.setText(windSpeed + " Km/Jam");
+                windSpeedTV.setText(windSpeed + " Km/H");
                 String uv = response.getJSONObject("current").getString("uv");
                 ultraVioletTV.setText(uv);
                 int isDay = response.getJSONObject("current").getInt("is_day");
