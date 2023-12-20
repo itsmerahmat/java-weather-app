@@ -1,5 +1,6 @@
 package com.example.weatherapp;
 // Import Library yang diperlukan
+import android.annotation.SuppressLint; // Untuk memberikan informasi tambahan tentang anotasi
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +19,9 @@ import java.util.Date;
 
 public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.ViewHolder> {
     // Deklarasi Variabel yang diperlukan
-    private Context context; // Untuk mengakses resource
+    private final Context context; // Untuk mengakses resource
     // Membuat ArrayList untuk menampung data
-    private ArrayList<WeatherRVModal> weatherRVModalArrayList;
+    private final ArrayList<WeatherRVModal> weatherRVModalArrayList;
 
     // Membuat Constructor
     public WeatherRVAdapter(Context context, ArrayList<WeatherRVModal> weatherRVModalArrayList) {
@@ -37,17 +38,19 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.View
     }
 
     // Menghubungkan data dengan ViewHolder
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull WeatherRVAdapter.ViewHolder holder, int position) {
         WeatherRVModal modal = weatherRVModalArrayList.get(position);
         holder.temperatureTV.setText(modal.getTemperature() + "°C");
         Picasso.get().load("http:".concat(modal.getIcon())).into(holder.conditionIV);
         holder.windTV.setText(modal.getWindSpeed() + " Km/Jam");
-        SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        SimpleDateFormat output = new SimpleDateFormat("hh:mm");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat output = new SimpleDateFormat("hh:mm");
 
         try {
             Date t = input.parse(modal.getTime());
+            assert t != null; // Untuk mengecek apakah t bernilai null
             holder.timeTV.setText(output.format(t));
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,8 +65,10 @@ public class WeatherRVAdapter extends RecyclerView.Adapter<WeatherRVAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView timeTV, temperatureTV, windTV;
-        private ImageView conditionIV;
+        private final TextView timeTV;
+        private final TextView temperatureTV;
+        private final TextView windTV;
+        private final ImageView conditionIV;
         public ViewHolder(@NonNull ViewGroup parent) {
             super(parent);
             timeTV = parent.findViewById(R.id.idTVTime);
